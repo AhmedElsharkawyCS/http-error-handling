@@ -7,7 +7,8 @@
   "types": "build/index.d.ts",
   "files": [
     "build",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "author": {
     "name": "Ahmed Elsharkawy",
@@ -25,7 +26,11 @@
     "status code",
     "error handling"
   ],
-  "homepage": "https://github.com/AhmedElsharkawyCS/advanced-microservices-ticketing-app",
+  "homepage": "https://github.com/AhmedElsharkawyCS/express-http-error-handling/blob/main/README.md",
+  "repository": {
+    "url": "https://github.com/AhmedElsharkawyCS/express-http-error-handling",
+    "type": "git"
+  },
   "license": "ISC",
   "devDependencies": {
     "@types/express": "^4.17.13",
