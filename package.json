@@ -1,6 +1,6 @@
 {
   "name": "http-error-handling",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "it's a sample library to handle HTTP errors and help you to standardize error handling across the whole application",
   "main": "build/index.js",
   "module": "build/index.js",
@@ -27,9 +27,9 @@
     "error handling",
     "http error handling"
   ],
-  "homepage": "https://github.com/AhmedElsharkawyCS/express-http-error-handling/blob/main/README.md",
+  "homepage": "https://github.com/AhmedElsharkawyCS/http-error-handling/blob/main/README.md",
   "repository": {
-    "url": "https://github.com/AhmedElsharkawyCS/express-http-error-handling",
+    "url": "https://github.com/AhmedElsharkawyCS/http-error-handling",
     "type": "git"
   },
   "license": "ISC",
