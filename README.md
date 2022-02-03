@@ -1,4 +1,4 @@
-# express-http-error-handling
+# http-error-handling
 
 Handling HTTP errors for your Express application easily.
 
@@ -9,100 +9,131 @@ This is a [Node.js](https://nodejs.org/en/) module available through the
 [`npm install` command](https://docs.npmjs.com/getting-started/installing-npm-packages-locally):
 
 ```console
-npm install http-errors
+npm install http-error-handling
 ```
 
-## Example
+## Examples
+
+### CommonJS
 
 ```js
-var createError = require("http-errors")
+var { HttpError } = require("http-error-handling")
 var express = require("express")
 var app = express()
-
-app.use(function (req, res, next) {
-  if (!req.user) return next(createError(401, "Please login to view this page."))
-  next()
+// in the beginning of your app (important)
+app.use(HttpError.initializer)
+// your app routes or other middlewares
+//sample APIs
+app.get("/400", (req, res, next) => {
+  return HttpError.BadRequest()
 })
+app.get("/500", (req, res, next) => {
+  return HttpError.InternalServerError("something went wrong")
+})
+app.get("/custom", (req, res, next) => {
+  const errorObject = {
+    statusCode: 502,
+    message: "custom error",
+    key: "custom_error", // optional parameter
+  }
+  return HttpError.customError(errorObject)
+})
+
+//in the end of your app (important)
+app.use(HttpErrorHandling.handler)
+```
+
+### ES6
+
+```js
+import { ErrorAttrs, HttpError } from "http-error-handling"
+import express, { NextFunction, Request, Response } from "express"
+let app = express()
+// in the beginning of your app (important)
+app.use(HttpError.initializer)
+// your app routes or other middlewares
+//sample APIs
+app.get("/400", (req: Request, res: Response, next: NextFunction) => {
+  return HttpError.BadRequest("invalid request data")
+})
+app.get("/500", (req: Request, res: Response, next: NextFunction) => {
+  return HttpError.InternalServerError()
+})
+app.get("/custom", (req: Request, res: Response, next: NextFunction) => {
+  const errorObject: ErrorAttrs = {
+    statusCode: 502,
+    message: "custom error",
+    key: "custom_error", // optional parameter
+  }
+  return HttpErrorHandling.customError(errorObject)
+})
+
+//in the end of your app (important)
+app.use(HttpErrorHandling.handler)
 ```
 
 ## API
 
-This is the current API, currently extracted from Koa and subject to change.
+This is the current API
 
 ### Error Properties
 
-- `expose` - can be used to signal if `message` should be sent to the client,
-  defaulting to `false` when `status` >= 500
-- `headers` - can be an object of header names to values to be sent to the
-  client, defaulting to `undefined`. When defined, the key names should all
-  be lower-cased
-- `message` - the traditional error message, which should be kept short and all
-  single line
-- `status` - the status code of the error, mirroring `statusCode` for general
-  compatibility
-- `statusCode` - the status code of the error, defaulting to `500`
+- `statusCode` - the status code of the error.
+- `message` - the traditional error message.
+- `key` - the error key and the main purpose we can use it for localization part
+  and in this case we will have a generic errors we can catch any error message
+  by key `for example:` we can store local.en.json and local.en.json includes
 
-### createError([status], [message], [properties])
+  ```json
+  { "bad_request": "invalid user request data" }
+  ```
 
-Create a new error object with the given message `msg`.
-The error object inherits from `createError.HttpError`.
+  and local.ar.json includes
 
-```js
-var err = createError(404, "This video does not exist!")
-```
+  ```json
+  { "bad_request": "بايانات غير صحيحة" }
+  ```
 
-- `status: 500` - the status code as a number
-- `message` - the message of the error, defaulting to node's text for that status code.
-- `properties` - custom properties to attach to the object
+  and the both files located in the
+  frontend so by using the response `key` we can localize the error message
+  easily.
 
-### createError([status], [error], [properties])
+### HttpError.initializer
 
-Extend the given `error` object with `createError.HttpError`
-properties. This will not alter the inheritance of the given
-`error` object, and the modified `error` object is the
-return value.
-
-<!-- eslint-disable no-redeclare -->
+it's a middleware and it should be in the top of your app or at lest before your
+routes that include `http-error-handling`
 
 ```js
-fs.readFile("foo.txt", function (err, buf) {
-  if (err) {
-    if (err.code === "ENOENT") {
-      var httpError = createError(404, err, { expose: false })
-    } else {
-      var httpError = createError(500, err)
-    }
-  }
+app.use(HttpError.initializer)
+// OR
+app.use((req, res, next) => {
+  HttpError.initializer(req, res, next)
 })
 ```
 
-- `status` - the status code as a number
-- `error` - the error object to extend
-- `properties` - custom properties to attach to the object
+### HttpError.handler
 
-### createError.isHttpError(val)
-
-Determine if the provided `val` is an `HttpError`. This will return `true`
-if the error inherits from the `HttpError` constructor of this module or
-matches the "duck type" for an error this module creates. All outputs from
-the `createError` factory will return `true` for this function, including
-if an non-`HttpError` was passed into the factory.
-
-### new createError\[code || name\](\[msg]\))
-
-Create a new error object with the given message `msg`.
-The error object inherits from `createError.HttpError`.
+it's a middleware and it will handle all the errors returned by
+`http-error-handling` and it will send it back to the client but if the error
+not belong ot the lib it will pass it using next fun
 
 ```js
-var err = new createError.NotFound()
+app.use(HttpError.handler)
+// OR
+app.use((err, req, res, next) => {
+  HttpError.handler(err, req, res, next)
+})
 ```
 
-- `code` - the status code as a number
-- `name` - the name of the error as a "bumpy case", i.e. `NotFound` or `InternalServerError`.
+### HttpError.customError
 
-#### List of all constructors
+it's a helper to allow you from create your custom error.
 
-| Status Code | Constructor Name              |
+### HttpError.{{ any fun from the next list }}
+
+- these functions have an optional attr `message` only to customize the error message-
+
+| status code | function name                 |
 | ----------- | ----------------------------- |
 | 400         | BadRequest                    |
 | 401         | Unauthorized                  |

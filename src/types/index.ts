@@ -1,7 +1,6 @@
 export interface ErrorAttrs {
   statusCode: number
   message: string
-  field?: string
   key?: string
 }
 
