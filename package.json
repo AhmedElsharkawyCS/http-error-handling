@@ -1,6 +1,6 @@
 {
   "name": "express-http-error-handling",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "it's a sample library to handle HTTP errors and help you to standardize error handling across the whole application",
   "main": "build/index.js",
   "module": "build/index.js",
