@@ -1,5 +1,5 @@
 {
-  "name": "@sharkawy/express-http-error-handling",
+  "name": "express-http-error-handling",
   "version": "1.0.0",
   "description": "it's a sample library to handle HTTP errors and help you to standardize error handling across the whole application",
   "main": "build/index.js",
@@ -15,7 +15,10 @@
     "email": "ahmedelsharkawy.fcih@gmail.com",
     "url": "https://www.linkedin.com/in/ahmed-elsharkawy-3684a5140/"
   },
-  "scripts": {},
+  "scripts": {
+    "build": "tsc",
+    "publish": "npm run build && npm version patch && npm publish --access public"
+  },
   "keywords": [
     "Node",
     "Typescript",
