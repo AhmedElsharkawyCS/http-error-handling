@@ -40,7 +40,7 @@ app.get("/custom", (req, res, next) => {
 })
 
 //in the end of your app (important)
-app.use(HttpErrorHandling.handler)
+app.use(HttpError.handler)
 ```
 
 ### ES6
@@ -65,11 +65,11 @@ app.get("/custom", (req: Request, res: Response, next: NextFunction) => {
     message: "custom error",
     key: "custom_error", // optional parameter
   }
-  return HttpErrorHandling.customError(errorObject)
+  return HttpError.customError(errorObject)
 })
 
 //in the end of your app (important)
-app.use(HttpErrorHandling.handler)
+app.use(HttpError.handler)
 ```
 
 ## API
@@ -129,7 +129,7 @@ app.use((err, req, res, next) => {
 
 it's a helper to allow you from create your custom error.
 
-### HttpError.{{ any fun from the next list }}
+### HttpError.{{ any function from the next list }}
 
 - these functions have an optional attr `message` only to customize the error message-
 
