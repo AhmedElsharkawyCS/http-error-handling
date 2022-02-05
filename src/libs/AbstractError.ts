@@ -1,9 +1,7 @@
-import { NextFunction } from "express"
 import statuses from "statuses"
 import CustomError from "./CustomError"
 
 export default abstract class HttpAbstractError {
-  abstract next: NextFunction
   abstract BadRequest(msg?: string): void
   abstract Unauthorized(msg?: string): void
   abstract PaymentRequired(msg?: string): void
