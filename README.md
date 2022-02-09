@@ -14,7 +14,8 @@ npm install http-error-handling
 
 ## Features
 
-- [HttpError](#HttpError.initializer)
+- [ErrorObject](#ErrorObject)
+- [HttpError](#HttpError)
 - [RequestValidator](#RequestValidator)
 
 ## Examples
@@ -38,15 +39,18 @@ app.get("/500", (req, res, next) => {
 app.get("/custom", (req, res, next) => {
   const customError = {
     statusCode: 502,
-    localizationKey: "custom_error", // optional parameter
-    errors: [
+    message: "custom message",
+    errorKey: "custom_error", // optional parameter
+    description: "description", // optional parameter
+    help: "https://domain.example/integration/fixes/custom-api", // optional parameter
+    invalidParams: [
       {
-        message: "custom error",
-        description: "custom error description", // optional parameter
-        param: "param key", // optional parameter
+        message: "invalid value",
+        location: "body", // optional parameter
+        param: "email",
       },
-      // you can add more objects
-    ],
+      //you can add more objects
+    ], // optional parameter
   }
   return HttpError.customError(errorObject)
 })
@@ -74,15 +78,18 @@ app.get("/500", (req: Request, res: Response, next: NextFunction) => {
 app.get("/custom", (req: Request, res: Response, next: NextFunction) => {
   const custom: ErrorsAttrs = {
     statusCode: 502,
-    localizationKey: "custom_error", // optional parameter
-    errors: [
+    message: "custom message",
+    errorKey: "custom_error", // optional parameter
+    description: "description", // optional parameter
+    help: "https://domain.example/integration/fixes/custom-api", // optional parameter
+    invalidParams: [
       {
-        message: "custom error",
-        description: "custom error description", // optional parameter
-        param: "param key", // optional parameter
+        message: "invalid value",
+        location: "body", // optional parameter
+        param: "string",
       },
-      // you can add more objects
-    ],
+      //you can add more objects
+    ], // optional parameter
   }
   return HttpError.customError(errorObject)
 })
@@ -91,21 +98,21 @@ app.get("/custom", (req: Request, res: Response, next: NextFunction) => {
 app.use(HttpError.handler)
 ```
 
-## API
+## ErrorObject
 
-This is the current API
+- `statusCode`: the status code of the error. `required`
+- `message`: the error message. `required`
+- `description`: the error description. `optional`
+- `help`: the error url that can help the client to fix the api issue e.g
+  (<https://your-domain.example/integration/fixes/auth-api>) `optional`
+- `invalidParams`: the errors of request in case you need to validate the
+  request data. `optional`
 
-### Error Properties
+  - `message`: the error message. `required`
+  - `param`: the error parameter name e.g (email, password, name, etc). `optional`
+  - `location`: the location of parameter key. `required`
 
-- `statusCode` - the status code of the error.
-
-- `errors`
-
-  - `message` - the error message
-  - `param` - the error parameter e.g (email, password, name, etc)
-  - `description` - the error description
-
-- `localizationKey` - the error key and the main purpose we can use it for localization part
+- `errorKey`: the error key and the main purpose we can use it for localization part
   and in this case we will have a generic errors we can catch any error message
   by key `for example:` we can store local.en.json and local.en.json includes
 
@@ -120,15 +127,15 @@ This is the current API
   ```
 
   and the both files located in the
-  frontend so by using the response `localizationKey` we can localize the error message
-  easily.
+  frontend so by using the response `errorKey` we can localize the error message
+  easily. `optional`
 
-### HttpError.initializer
+## HttpError
 
-<span id="HttpError.initializer"><span>
+### Initializer
 
 it's a middleware should be used in the top of your app or at lest before your
-routes that include `http-error-handling`
+routes that include `HttpError`
 
 ```js
 // in the beginning of your app (important)
@@ -139,7 +146,7 @@ app.use((req, res, next) => {
 })
 ```
 
-### HttpError.handler
+### Handler
 
 it's a middleware and it will handle all the errors returned by
 `HttpError` functions and it will send it back to the client but if the error
@@ -154,14 +161,20 @@ app.use((err, req, res, next) => {
 })
 ```
 
-### HttpError.customError
+### customError
 
-it's a helper function that helps you to create your custom error.
+it's a helper function can help you to create your custom error.
 
 ### HttpError.{{ any function from the next list }}
 
 - they are helper functions allow you to send sepecific error to the client
-  - `message` customize the error message `optional`
+
+- `attrs` error object to customize your error response `optional`
+  - `message`: the error message. `required`
+  - `errorKey`: the error key. `optional`
+  - `help`: the error help location/url. `optional`
+  - `description`: the error description `optional`
+  - `invalidParams`: the request parameters errors `optional`
 
 | status code | function name                 |
 | ----------- | ----------------------------- |
@@ -207,17 +220,16 @@ it's a helper function that helps you to create your custom error.
 | 510         | NotExtended                   |
 | 511         | NetworkAuthenticationRequired |
 
-## Validating the request
+---
 
-### RequestValidator
+## RequestValidator
 
-<span id="RequestValidator"><span>
 it's a middleware should be used after validating the request
 body/parameter/query using `express-validator` library
 
 ```js
-import { RequestValidator } from "http-error-handling"
 import { body } from "express-validator"
+import { RequestValidator } from "http-error-handling"
 import express, { NextFunction, Request, Response } from "express"
 let app = express()
 //sample API

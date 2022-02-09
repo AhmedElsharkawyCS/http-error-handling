@@ -1,53 +1,61 @@
+import { NextFunction } from "express"
 import statuses from "statuses"
+import { CreateErrorAttrs, HttpErrorMethodsAttr } from "../types"
 import CustomError from "./CustomError"
 
 export default abstract class HttpAbstractError {
-  abstract BadRequest(msg?: string): void
-  abstract Unauthorized(msg?: string): void
-  abstract PaymentRequired(msg?: string): void
-  abstract Forbidden(msg?: string): void
-  abstract NotFound(msg?: string): void
-  abstract MethodNotAllowed(msg?: string): void
-  abstract NotAcceptable(msg?: string): void
-  abstract ProxyAuthenticationRequired(msg?: string): void
-  abstract RequestTimeout(msg?: string): void
-  abstract Conflict(msg?: string): void
-  abstract Gone(msg?: string): void
-  abstract LengthRequired(msg?: string): void
-  abstract PreconditionFailed(msg?: string): void
-  abstract PayloadTooLarge(msg?: string): void
-  abstract URITooLong(msg?: string): void
-  abstract UnsupportedMediaType(msg?: string): void
-  abstract RangeNotSatisfiable(msg?: string): void
-  abstract ExpectationFailed(msg?: string): void
-  abstract ImATeapot(msg?: string): void
-  abstract MisdirectedRequest(msg?: string): void
-  abstract UnprocessableEntity(msg?: string): void
-  abstract Locked(msg?: string): void
-  abstract FailedDependency(msg?: string): void
-  abstract TooEarly(msg?: string): void
-  abstract UpgradeRequired(msg?: string): void
-  abstract PreconditionRequired(msg?: string): void
-  abstract TooManyRequests(msg?: string): void
-  abstract RequestHeaderFieldsTooLarge(msg?: string): void
-  abstract UnavailableForLegalReasons(msg?: string): void
-  abstract InternalServerError(msg?: string): void
-  abstract NotImplemented(msg?: string): void
-  abstract BadGateway(msg?: string): void
-  abstract ServiceUnavailable(msg?: string): void
-  abstract GatewayTimeout(msg?: string): void
-  abstract HTTPVersionNotSupported(msg?: string): void
-  abstract VariantAlsoNegotiates(msg?: string): void
-  abstract InsufficientStorage(msg?: string): void
-  abstract LoopDetected(msg?: string): void
-  abstract BandwidthLimitExceeded(msg?: string): void
-  abstract NotExtended(msg?: string): void
-  abstract NetworkAuthenticationRequired(msg?: string): void
+  abstract BadRequest(attrs?: HttpErrorMethodsAttr): void
+  abstract Unauthorized(attrs?: HttpErrorMethodsAttr): void
+  abstract PaymentRequired(attrs?: HttpErrorMethodsAttr): void
+  abstract Forbidden(attrs?: HttpErrorMethodsAttr): void
+  abstract NotFound(attrs?: HttpErrorMethodsAttr): void
+  abstract MethodNotAllowed(attrs?: HttpErrorMethodsAttr): void
+  abstract NotAcceptable(attrs?: HttpErrorMethodsAttr): void
+  abstract ProxyAuthenticationRequired(attrs?: HttpErrorMethodsAttr): void
+  abstract RequestTimeout(attrs?: HttpErrorMethodsAttr): void
+  abstract Conflict(attrs?: HttpErrorMethodsAttr): void
+  abstract Gone(attrs?: HttpErrorMethodsAttr): void
+  abstract LengthRequired(attrs?: HttpErrorMethodsAttr): void
+  abstract PreconditionFailed(attrs?: HttpErrorMethodsAttr): void
+  abstract PayloadTooLarge(attrs?: HttpErrorMethodsAttr): void
+  abstract URITooLong(attrs?: HttpErrorMethodsAttr): void
+  abstract UnsupportedMediaType(attrs?: HttpErrorMethodsAttr): void
+  abstract RangeNotSatisfiable(attrs?: HttpErrorMethodsAttr): void
+  abstract ExpectationFailed(attrs?: HttpErrorMethodsAttr): void
+  abstract ImATeapot(attrs?: HttpErrorMethodsAttr): void
+  abstract MisdirectedRequest(attrs?: HttpErrorMethodsAttr): void
+  abstract UnprocessableEntity(attrs?: HttpErrorMethodsAttr): void
+  abstract Locked(attrs?: HttpErrorMethodsAttr): void
+  abstract FailedDependency(attrs?: HttpErrorMethodsAttr): void
+  abstract TooEarly(attrs?: HttpErrorMethodsAttr): void
+  abstract UpgradeRequired(attrs?: HttpErrorMethodsAttr): void
+  abstract PreconditionRequired(attrs?: HttpErrorMethodsAttr): void
+  abstract TooManyRequests(attrs?: HttpErrorMethodsAttr): void
+  abstract RequestHeaderFieldsTooLarge(attrs?: HttpErrorMethodsAttr): void
+  abstract UnavailableForLegalReasons(attrs?: HttpErrorMethodsAttr): void
+  abstract InternalServerError(attrs?: HttpErrorMethodsAttr): void
+  abstract NotImplemented(attrs?: HttpErrorMethodsAttr): void
+  abstract BadGateway(attrs?: HttpErrorMethodsAttr): void
+  abstract ServiceUnavailable(attrs?: HttpErrorMethodsAttr): void
+  abstract GatewayTimeout(attrs?: HttpErrorMethodsAttr): void
+  abstract HTTPVersionNotSupported(attrs?: HttpErrorMethodsAttr): void
+  abstract VariantAlsoNegotiates(attrs?: HttpErrorMethodsAttr): void
+  abstract InsufficientStorage(attrs?: HttpErrorMethodsAttr): void
+  abstract LoopDetected(attrs?: HttpErrorMethodsAttr): void
+  abstract BandwidthLimitExceeded(attrs?: HttpErrorMethodsAttr): void
+  abstract NotExtended(attrs?: HttpErrorMethodsAttr): void
+  abstract NetworkAuthenticationRequired(attrs?: HttpErrorMethodsAttr): void
 
-  protected crateError(code: number, msg?: string): CustomError {
-    const message = msg || statuses.message[code]
-    const localizationKey = statuses.message[code].toLowerCase().replace(/ /g, "_")
-    const error = new CustomError({ statusCode: code, localizationKey, errors: [{ message }] })
+  protected crateError({ code, additionalProps, message }: CreateErrorAttrs): CustomError {
+    const msg = message || statuses.message[code]
+    const key = statuses.message[code].toLowerCase().replace(/ /g, "_")
+    const error = new CustomError({ message: msg, statusCode: code, errorKey: key, ...additionalProps })
     return error
+  }
+  protected NextError(code: number, next: NextFunction, attrs?: HttpErrorMethodsAttr) {
+    if (!next) throw new Error("Cannot access HttpError functions till adding the initializer middleware")
+    const { message, ...additionalProps } = attrs || {}
+    const error = this.crateError({ additionalProps, code, message })
+    return next(error)
   }
 }

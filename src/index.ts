@@ -1,5 +1,5 @@
-import { ErrorsAttrs } from "./types"
+import { ErrorAttrs } from "./types"
 import { HttpError } from "./libs/HttpError"
 import { RequestValidator } from "./libs/RequestValidator"
 
-export { ErrorsAttrs, HttpError, RequestValidator }
+export { ErrorAttrs, HttpError, RequestValidator }

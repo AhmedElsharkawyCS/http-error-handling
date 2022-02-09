@@ -1,13 +1,20 @@
-import { ErrorsAttrs } from "../types"
+import { ErrorAttrs } from "../types"
 
-export default class CustomError extends Error implements ErrorsAttrs {
-  statusCode: number
-  localizationKey?: string
-  errors: { message: string; description?: string; param?: string }[]
-  constructor({ errors, statusCode, localizationKey }: ErrorsAttrs) {
-    super("")
-    this.localizationKey = localizationKey
+export default class CustomError extends Error implements ErrorAttrs {
+  statusCode: number | string
+  errorKey?: string
+  description?: string
+  invalidParams?: { message: string; location?: string; param: string }[]
+  help?: string
+  message: string
+
+  constructor({ statusCode, invalidParams, message, description, errorKey, help }: ErrorAttrs) {
+    super(message)
+    this.description = description
+    this.invalidParams = invalidParams
+    this.help = help
     this.statusCode = statusCode
-    this.errors = errors
+    this.errorKey = errorKey
+    this.message
   }
 }

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express"
 import HttpAbstractError from "./AbstractError"
 import CustomError from "./CustomError"
-import { ErrorsAttrs } from "../types"
+import { ErrorAttrs, HttpErrorMethodsAttr } from "../types"
 
 class ExpressHttpError extends HttpAbstractError {
   private next: NextFunction
@@ -11,230 +11,184 @@ class ExpressHttpError extends HttpAbstractError {
     return next()
   }
 
-  private isInitialized = () => {
-    if (!this.next) throw new Error("Cannot access HttpError functions till adding the initializer middleware")
-  }
-
-  BadRequest = (msg?: string) => {
+  BadRequest = (attrs?: HttpErrorMethodsAttr) => {
     const code = 400
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  Unauthorized = (msg?: string) => {
+  Unauthorized = (attrs?: HttpErrorMethodsAttr) => {
     const code = 401
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  PaymentRequired = (msg?: string) => {
+  PaymentRequired = (attrs?: HttpErrorMethodsAttr) => {
     const code = 402
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  Forbidden = (msg?: string) => {
+  Forbidden = (attrs?: HttpErrorMethodsAttr) => {
     const code = 403
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  NotFound = (msg?: string) => {
+  NotFound = (attrs?: HttpErrorMethodsAttr) => {
     const code = 404
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  MethodNotAllowed = (msg?: string) => {
+  MethodNotAllowed = (attrs?: HttpErrorMethodsAttr) => {
     const code = 405
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  NotAcceptable = (msg?: string) => {
+  NotAcceptable = (attrs?: HttpErrorMethodsAttr) => {
     const code = 406
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  ProxyAuthenticationRequired = (msg?: string) => {
+  ProxyAuthenticationRequired = (attrs?: HttpErrorMethodsAttr) => {
     const code = 407
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  RequestTimeout = (msg?: string) => {
+  RequestTimeout = (attrs?: HttpErrorMethodsAttr) => {
     const code = 408
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  Conflict = (msg?: string) => {
+  Conflict = (attrs?: HttpErrorMethodsAttr) => {
     const code = 409
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  Gone = (msg?: string) => {
+  Gone = (attrs?: HttpErrorMethodsAttr) => {
     const code = 410
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  LengthRequired = (msg?: string) => {
+  LengthRequired = (attrs?: HttpErrorMethodsAttr) => {
     const code = 411
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  PreconditionFailed = (msg?: string) => {
+  PreconditionFailed = (attrs?: HttpErrorMethodsAttr) => {
     const code = 412
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  PayloadTooLarge = (msg?: string) => {
+  PayloadTooLarge = (attrs?: HttpErrorMethodsAttr) => {
     const code = 413
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  URITooLong = (msg?: string) => {
+  URITooLong = (attrs?: HttpErrorMethodsAttr) => {
     const code = 414
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  UnsupportedMediaType = (msg?: string) => {
+  UnsupportedMediaType = (attrs?: HttpErrorMethodsAttr) => {
     const code = 415
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  RangeNotSatisfiable = (msg?: string) => {
+  RangeNotSatisfiable = (attrs?: HttpErrorMethodsAttr) => {
     const code = 416
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  ExpectationFailed = (msg?: string) => {
+  ExpectationFailed = (attrs?: HttpErrorMethodsAttr) => {
     const code = 417
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  ImATeapot = (msg?: string) => {
+  ImATeapot = (attrs?: HttpErrorMethodsAttr) => {
     const code = 418
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  MisdirectedRequest = (msg?: string) => {
+  MisdirectedRequest = (attrs?: HttpErrorMethodsAttr) => {
     const code = 421
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  UnprocessableEntity = (msg?: string) => {
+  UnprocessableEntity = (attrs?: HttpErrorMethodsAttr) => {
     const code = 422
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  Locked = (msg?: string) => {
+  Locked = (attrs?: HttpErrorMethodsAttr) => {
     const code = 424
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  FailedDependency = (msg?: string) => {
+  FailedDependency = (attrs?: HttpErrorMethodsAttr) => {
     const code = 424
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  TooEarly = (msg?: string) => {
+  TooEarly = (attrs?: HttpErrorMethodsAttr) => {
     const code = 425
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  UpgradeRequired = (msg?: string) => {
+  UpgradeRequired = (attrs?: HttpErrorMethodsAttr) => {
     const code = 426
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  PreconditionRequired = (msg?: string) => {
+  PreconditionRequired = (attrs?: HttpErrorMethodsAttr) => {
     const code = 428
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  TooManyRequests = (msg?: string) => {
+  TooManyRequests = (attrs?: HttpErrorMethodsAttr) => {
     const code = 429
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  RequestHeaderFieldsTooLarge = (msg?: string) => {
+  RequestHeaderFieldsTooLarge = (attrs?: HttpErrorMethodsAttr) => {
     const code = 431
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  UnavailableForLegalReasons = (msg?: string) => {
+  UnavailableForLegalReasons = (attrs?: HttpErrorMethodsAttr) => {
     const code = 451
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  InternalServerError = (msg?: string) => {
+  InternalServerError = (attrs?: HttpErrorMethodsAttr) => {
     const code = 500
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  NotImplemented = (msg?: string) => {
+  NotImplemented = (attrs?: HttpErrorMethodsAttr) => {
     const code = 501
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  BadGateway = (msg?: string) => {
+  BadGateway = (attrs?: HttpErrorMethodsAttr) => {
     const code = 502
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  ServiceUnavailable = (msg?: string) => {
+  ServiceUnavailable = (attrs?: HttpErrorMethodsAttr) => {
     const code = 503
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  GatewayTimeout = (msg?: string) => {
+  GatewayTimeout = (attrs?: HttpErrorMethodsAttr) => {
     const code = 504
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  HTTPVersionNotSupported = (msg?: string) => {
+  HTTPVersionNotSupported = (attrs?: HttpErrorMethodsAttr) => {
     const code = 505
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  VariantAlsoNegotiates = (msg?: string) => {
+  VariantAlsoNegotiates = (attrs?: HttpErrorMethodsAttr) => {
     const code = 506
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  InsufficientStorage = (msg?: string) => {
+  InsufficientStorage = (attrs?: HttpErrorMethodsAttr) => {
     const code = 507
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  LoopDetected = (msg?: string) => {
+  LoopDetected = (attrs?: HttpErrorMethodsAttr) => {
     const code = 508
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  BandwidthLimitExceeded = (msg?: string) => {
+  BandwidthLimitExceeded = (attrs?: HttpErrorMethodsAttr) => {
     const code = 509
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  NotExtended = (msg?: string) => {
+  NotExtended = (attrs?: HttpErrorMethodsAttr) => {
     const code = 510
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  NetworkAuthenticationRequired = (msg?: string) => {
+  NetworkAuthenticationRequired = (attrs?: HttpErrorMethodsAttr) => {
     const code = 511
-    this.isInitialized()
-    return this.next(this.crateError(code, msg))
+    return this.NextError(code, this.next, attrs)
   }
-  customError = (error: ErrorsAttrs) => {
-    this.isInitialized()
-    return this.next(new CustomError(error))
+  customError = (error: ErrorAttrs) => {
+    const { message, statusCode, description, errorKey, help, invalidParams } = error
+    return this.NextError(Number(statusCode), this.next, { message, description, errorKey, help, invalidParams })
   }
   handler = (err: CustomError, req: Request, res: Response, next: NextFunction) => {
-    this.isInitialized()
-    //catch only owen errors
+    //catch only lib's errors
     if (err instanceof CustomError) {
-      const { errors, statusCode, localizationKey } = err
-      return res.status(err.statusCode).send({ errors, statusCode, localizationKey })
+      return res.status(Number(err.statusCode)).send({ error: err })
     }
-    // continue and lef client to take his error
+    // continue and to next middleware and passing the error
     return this.next(err)
   }
 }
+
 const HttpError = new ExpressHttpError()
 
 export { HttpError }
