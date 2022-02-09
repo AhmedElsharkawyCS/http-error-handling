@@ -5,8 +5,8 @@ import CustomError from "./CustomError"
 
 export const RequestValidator = (req: Request, res: Response, next: NextFunction) => {
   const code = 400
-  const msg = statuses.message[code].toLowerCase()
-  const key = msg.replace(/ /g, "_")
+  const msg = statuses.message[code]
+  const key = msg.toLowerCase().replace(/ /g, "_")
   const customError = {
     statusCode: code,
     invalidParams: [],

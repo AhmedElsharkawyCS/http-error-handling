@@ -182,7 +182,8 @@ class ExpressHttpError extends HttpAbstractError {
   handler = (err: CustomError, req: Request, res: Response, next: NextFunction) => {
     //catch only lib's errors
     if (err instanceof CustomError) {
-      return res.status(Number(err.statusCode)).send({ error: err })
+      const { message, statusCode, description, errorKey, help, invalidParams } = err
+      return res.status(Number(err.statusCode)).send({ error: { message, statusCode, description, errorKey, help, invalidParams } })
     }
     // continue and to next middleware and passing the error
     return this.next(err)
