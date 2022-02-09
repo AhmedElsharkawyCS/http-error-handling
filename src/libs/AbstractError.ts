@@ -46,8 +46,8 @@ export default abstract class HttpAbstractError {
 
   protected crateError(code: number, msg?: string): CustomError {
     const message = msg || statuses.message[code]
-    const key = statuses.message[code].toLowerCase().replace(/ /g, "_")
-    const error = new CustomError({ message, statusCode: code, key })
+    const localizationKey = statuses.message[code].toLowerCase().replace(/ /g, "_")
+    const error = new CustomError({ statusCode: code, localizationKey, errors: [{ message }] })
     return error
   }
 }

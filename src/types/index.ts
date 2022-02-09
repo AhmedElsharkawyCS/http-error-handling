@@ -1,7 +1,11 @@
-export interface ErrorAttrs {
+export interface ErrorsAttrs {
   statusCode: number
-  message: string
-  key?: string
+  localizationKey?: string
+  errors: Array<{
+    message: string
+    description?: string
+    param?: string
+  }>
 }
 
 export interface HttpErrorMethods {

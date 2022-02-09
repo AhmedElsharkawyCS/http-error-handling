@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express"
 import HttpAbstractError from "./AbstractError"
 import CustomError from "./CustomError"
-import { ErrorAttrs } from "../types"
+import { ErrorsAttrs } from "../types"
 
 class ExpressHttpError extends HttpAbstractError {
   private next: NextFunction
@@ -220,7 +220,7 @@ class ExpressHttpError extends HttpAbstractError {
     this.isInitialized()
     return this.next(this.crateError(code, msg))
   }
-  customError = (error: ErrorAttrs) => {
+  customError = (error: ErrorsAttrs) => {
     this.isInitialized()
     return this.next(new CustomError(error))
   }
@@ -228,7 +228,8 @@ class ExpressHttpError extends HttpAbstractError {
     this.isInitialized()
     //catch only owen errors
     if (err instanceof CustomError) {
-      return res.status(err.statusCode).send({ error: { ...err, message: err.message } })
+      const { errors, statusCode, localizationKey } = err
+      return res.status(err.statusCode).send({ errors, statusCode, localizationKey })
     }
     // continue and lef client to take his error
     return this.next(err)
