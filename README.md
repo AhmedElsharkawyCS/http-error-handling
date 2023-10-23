@@ -1,4 +1,4 @@
-# http-error-handling
+# http-error-expressjs
 
 Handling HTTP errors for your Express application easily.
 
@@ -9,21 +9,20 @@ This is a [Node.js](https://nodejs.org/en/) module available through the
 [`npm install` command](https://docs.npmjs.com/getting-started/installing-npm-packages-locally):
 
 ```console
-npm install http-error-handling
+npm install http-error-expressjs
 ```
 
 ## Features
 
-- [ErrorObject](#ErrorObject)
-- [HttpError](#HttpError)
-- [RequestValidator](#RequestValidator)
+- [ErrorObject](#errorobject)
+- [HttpError](#httperror)
 
 ## Examples
 
 ### CommonJS
 
 ```js
-var { HttpError } = require("http-error-handling")
+var { HttpError } = require("http-error-expressjs")
 var express = require("express")
 var app = express()
 // in the beginning of your app (important)
@@ -47,22 +46,19 @@ app.get("/custom", (req, res, next) => {
       {
         message: "invalid value",
         location: "body", // optional parameter
-        param: "email",
-      },
+        param: "email"
+      }
       //you can add more objects
-    ], // optional parameter
+    ] // optional parameter
   }
   return HttpError.customError(errorObject)
 })
-
-//in the end of your app (important)
-app.use(HttpError.handler)
 ```
 
 ### ES6
 
 ```js
-import { ErrorsAttrs, HttpError } from "http-error-handling"
+import { ErrorsAttrs, HttpError } from "http-error-expressjs"
 import express, { NextFunction, Request, Response } from "express"
 let app = express()
 // in the beginning of your app (important)
@@ -86,16 +82,13 @@ app.get("/custom", (req: Request, res: Response, next: NextFunction) => {
       {
         message: "invalid value",
         location: "body", // optional parameter
-        param: "string",
-      },
+        param: "string"
+      }
       //you can add more objects
-    ], // optional parameter
+    ] // optional parameter
   }
   return HttpError.customError(errorObject)
 })
-
-//in the end of your app (important)
-app.use(HttpError.handler)
 ```
 
 ## ErrorObject
@@ -143,21 +136,6 @@ app.use(HttpError.initializer)
 // OR
 app.use((req, res, next) => {
   HttpError.initializer(req, res, next)
-})
-```
-
-### Handler
-
-it's a middleware and it will handle all the errors returned by
-`HttpError` functions and it will send it back to the client but if the error
-not belong ot the lib it will pass it using next fun
-
-```js
-// in the end of your app (important)
-app.use(HttpError.handler)
-// OR
-app.use((err, req, res, next) => {
-  HttpError.handler(err, req, res, next)
 })
 ```
 
@@ -221,22 +199,6 @@ it's a helper function can help you to create your custom error.
 | 511         | NetworkAuthenticationRequired |
 
 ---
-
-## RequestValidator
-
-it's a middleware should be used after validating the request
-body/parameter/query using `express-validator` library
-
-```js
-import { body } from "express-validator"
-import { RequestValidator } from "http-error-handling"
-import express, { NextFunction, Request, Response } from "express"
-let app = express()
-//sample API
-app.get("/validate", body("email").isEmail(), RequestValidator, (req: Request, res: Response, next: NextFunction) => {
-  return res.send(req.body)
-})
-```
 
 ## License
 

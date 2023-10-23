@@ -1,7 +1,6 @@
-import { NextFunction } from "express"
+import { Response } from "express"
 import statuses from "statuses"
 import { CreateErrorAttrs, HttpErrorMethodsAttr } from "../types"
-import CustomError from "./CustomError"
 
 export default abstract class HttpAbstractError {
   abstract BadRequest(attrs?: HttpErrorMethodsAttr): void
@@ -46,16 +45,15 @@ export default abstract class HttpAbstractError {
   abstract NotExtended(attrs?: HttpErrorMethodsAttr): void
   abstract NetworkAuthenticationRequired(attrs?: HttpErrorMethodsAttr): void
 
-  protected crateError({ code, additionalProps, message }: CreateErrorAttrs): CustomError {
+  protected crateResponse({ code, additionalProps, message }: CreateErrorAttrs) {
     const msg = message || statuses.message[code]
     const key = statuses.message[code].toLowerCase().replace(/ /g, "_")
-    const error = new CustomError({ message: msg, statusCode: code, errorKey: key, ...additionalProps })
-    return error
+    const error = { message: msg, statusCode: code, errorKey: key, ...additionalProps }
+    return { error }
   }
-  protected NextError(code: number, next: NextFunction, attrs?: HttpErrorMethodsAttr) {
-    if (!next) throw new Error("Cannot access HttpError functions till adding the initializer middleware")
+  protected NextError(code: number, res: Response, attrs?: HttpErrorMethodsAttr) {
+    if (!res) throw new Error("Cannot access HttpError functions till adding the initializer middleware")
     const { message, ...additionalProps } = attrs || {}
-    const error = this.crateError({ additionalProps, code, message })
-    return next(error)
+    return res.status(code).json(this.crateResponse({ code, message, additionalProps }))
   }
 }
